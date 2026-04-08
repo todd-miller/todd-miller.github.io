@@ -1,0 +1,201 @@
+---
+import { cls } from "@/src/lib/utils";
+import type { SkillsShowcase } from "@/src/content";
+
+const { heading, subheading, skills } = Astro.props as SkillsShowcase;
+
+const ROW_COUNT = 4;
+// pixels per second; negative = scroll left (content moves left)
+const ROW_SPEED = 10;
+const chunk = <T,>(arr: T[], n: number): T[][] => {
+  const size = Math.ceil(arr.length / n);
+  return Array.from({ length: n }, (_, i) => arr.slice(i * size, (i + 1) * size));
+};
+const rows = chunk(skills, ROW_COUNT).map((rowSkills, i) => ({
+  direction: i % 2 === 0 ? "left" : "right",
+  skills: rowSkills,
+}));
+
+const duplicate = <T,>(arr: T[]) => [...arr, ...arr, ...arr, ...arr];
+---
+
+<section class="mt-20">
+  <h2 class="opacity-50 uppercase mb-2">{heading}</h2>
+  {subheading && <p class="text-white/50 text-sm mb-6">{subheading}</p>}
+
+  <div class="skills-container relative py-2 overflow-hidden">
+    {
+      rows.map((row) => {
+        const skills = duplicate(row.skills);
+        return (
+          <div
+            class="skills-row relative w-full overflow-hidden my-3 group"
+            data-direction={row.direction}
+          >
+            <div
+              class={cls("skills-track flex w-max will-change-transform")}
+            >
+              {skills.map((skill) => {
+                const Tag = skill.url ? "a" : "div";
+                const props = skill.url
+                  ? { href: skill.url, target: "_blank", rel: "noopener noreferrer" }
+                  : {};
+                return (
+                  <div class="skill-card mx-2">
+                    <Tag
+                      class="skill-inner flex items-center gap-2 px-3 py-1.5 whitespace-nowrap transition-colors"
+                      {...props}
+                    >
+                      <img
+                        src={
+                          skill.icon.startsWith("/")
+                            ? skill.icon
+                            : `https://api.iconify.design/${skill.icon.includes(":") ? skill.icon.replace(":", "/") : `skill-icons/${skill.icon}`}.svg${skill.icon.startsWith("simple-icons:") ? "?color=%23ffffff" : ""}`
+                        }
+                        alt=""
+                        width="20"
+                        height="20"
+                        loading="lazy"
+                      />
+                      <span class="text-sm font-medium">{skill.name}</span>
+                    </Tag>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })
+    }
+
+    <div class="pointer-events-none absolute left-0 top-0 w-[10%] h-full bg-gradient-to-r from-background  to-transparent z-10"></div>
+    <div class="pointer-events-none absolute right-0 top-0 w-[10%] h-full bg-gradient-to-l from-background to-transparent z-10"></div>
+  </div>
+</section>
+
+<script is:inline define:vars={{ ROW_SPEED }}>
+  (() => {
+    const rows = document.querySelectorAll(".skills-row");
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    rows.forEach((row) => {
+      const track = row.querySelector(".skills-track");
+      if (!track) return;
+
+      const dir = row.getAttribute("data-direction") === "right" ? 1 : -1;
+      // One loop cycle = 1/4 of full track width (content duplicated 4x).
+      let cycle = 0;
+      const measure = () => { cycle = track.scrollWidth / 4; };
+      measure();
+      window.addEventListener("resize", measure);
+
+      // Start offset: reverse rows begin shifted so they have room to scroll right.
+      let offset = dir === 1 ? -cycle : 0;
+      let velocity = dir * ROW_SPEED; // px/sec
+      let dragging = false;
+      let hovering = false;
+      let pointerId = null;
+      let lastX = 0;
+      let lastT = 0;
+      let dragVel = 0;
+      let dragDist = 0;
+      let lastFrame = performance.now();
+
+      const wrap = (v) => {
+        if (cycle <= 0) return v;
+        // Keep offset in (-cycle, 0] so transform stays seamless.
+        while (v <= -cycle) v += cycle;
+        while (v > 0) v -= cycle;
+        return v;
+      };
+
+      const apply = () => {
+        track.style.transform = `translate3d(${offset}px, 0, 0)`;
+      };
+
+      const tick = (now) => {
+        const dt = Math.min(0.1, (now - lastFrame) / 1000);
+        lastFrame = now;
+        if (!dragging && !hovering && !prefersReduced) {
+          offset = wrap(offset + velocity * dt);
+          apply();
+        }
+        requestAnimationFrame(tick);
+      };
+      apply();
+      requestAnimationFrame(tick);
+
+      row.addEventListener("pointerenter", () => { hovering = true; });
+      row.addEventListener("pointerleave", () => { hovering = false; });
+
+      row.addEventListener("pointerdown", (e) => {
+        if (e.pointerType === "mouse" && e.button !== 0) return;
+        dragging = true;
+        pointerId = e.pointerId;
+        lastX = e.clientX;
+        lastT = performance.now();
+        dragVel = 0;
+        dragDist = 0;
+        row.setPointerCapture(pointerId);
+        row.classList.add("is-dragging");
+      });
+
+      row.addEventListener("pointermove", (e) => {
+        if (!dragging || e.pointerId !== pointerId) return;
+        const now = performance.now();
+        const dx = e.clientX - lastX;
+        const dt = (now - lastT) / 1000;
+        lastX = e.clientX;
+        lastT = now;
+        dragDist += Math.abs(dx);
+        if (dt > 0) dragVel = dx / dt;
+        offset = wrap(offset + dx);
+        apply();
+      });
+
+      const endDrag = (e) => {
+        if (!dragging || (e && e.pointerId !== pointerId)) return;
+        dragging = false;
+        try { row.releasePointerCapture(pointerId); } catch {}
+        pointerId = null;
+        row.classList.remove("is-dragging");
+        // Resume at baseline velocity (could blend in dragVel for inertia).
+        velocity = dir * ROW_SPEED;
+      };
+      row.addEventListener("pointerup", endDrag);
+      row.addEventListener("pointercancel", endDrag);
+
+      // Suppress link clicks after a real drag.
+      row.addEventListener(
+        "click",
+        (e) => {
+          if (dragDist > 5) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          dragDist = 0;
+        },
+        true
+      );
+    });
+  })();
+</script>
+
+<style is:global>
+  .skills-row {
+    cursor: grab;
+    touch-action: pan-y;
+    user-select: none;
+  }
+  .skills-row.is-dragging { cursor: grabbing; }
+  .skills-row.is-dragging a { pointer-events: none; }
+  .skill-card {
+    border-radius: 0.375rem;
+    background-color: rgb(255 255 255 / 0.05);
+    border: 1px solid rgb(255 255 255 / 0.1);
+  }
+  .skill-inner:hover {
+    background: rgb(255 255 255 / 0.05);
+    border-radius: 0.375rem;
+  }
+</style>

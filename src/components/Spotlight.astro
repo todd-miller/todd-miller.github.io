@@ -1,0 +1,19 @@
+---
+import type { Spotlight } from "@/src/content";
+
+const { heading, subheading, username } = Astro.props as Spotlight;
+---
+
+<section class="mt-20">
+  <h2 class="opacity-50 uppercase mb-2">{heading}</h2>
+  {subheading && <p class="text-white/50 text-sm mb-6">{subheading}</p>}
+
+  <div class="border border-white/10 p-4 rounded-sm overflow-x-auto">
+    <img
+      src={`https://ghchart.rshah.org/4ade80/${username}`}
+      alt={`${username} GitHub contributions`}
+      class="w-full min-w-[600px]"
+      loading="lazy"
+    />
+  </div>
+</section>

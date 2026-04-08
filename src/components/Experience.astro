@@ -17,25 +17,37 @@ const { title, jobs } = Astro.props as Experience;
             <FileDown class="size-4" />
         </a>
     </div>
-    {
-        jobs.map((job) => (
-            <ul>
-                <li class="mb-4 grid grid-cols-1 md:grid-cols-10">
-                    <span class="opacity-50 text-[0.87rem] col-span-2">
-                        {job.period}
-                    </span>
-                    <div class="col-span-8">
-                        <div>
-                            <span>{job.role}</span>
-                            <span class="opacity-50">|</span>
-                            <span>{job.company}</span>
-                        </div>
-                        <p class="text-[0.87rem] opacity-50">
-                            {job.description}
+    <ul class="border-x border-transparent hover:border-border transition-colors duration-300 ease-out px-4">
+        {jobs.map((job) => (
+            <li class="group cursor-pointer grid grid-cols-1 md:grid-cols-10 gap-y-1 py-4">
+                <span class="opacity-50 text-[0.87rem] col-span-2 pr-4 transition-opacity duration-300 group-hover:opacity-100">
+                    {job.period.display}
+                </span>
+                <div class="col-span-8">
+                    <div class="transition-colors duration-300 ease-out group-hover:text-primary">
+                    <span class="group-hover:text-accent">{job.role}</span>
+                    <span class="opacity-50">&nbsp;|&nbsp;</span>
+                    <span class="text-primary/70">{job.company}</span>
+                  </div>
+                    {job.summary && (
+                        <p class="text-[0.87rem] opacity-50 group-hover:opacity-90 group-hover:text-primary/70 transition-[color,opacity] duration-300 ease-out">
+                            {job.summary}
                         </p>
-                    </div>
-                </li>
-            </ul>
-        ))
-    }
+                    )}
+                    {job.highlights.length > 0 && (
+                        <div class="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out">
+                            <ul class="overflow-hidden text-[0.87rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out list-disc pl-5">
+                                {job.highlights.map((h) => <li class="mt-1">{h}</li>)}
+                            </ul>
+                        </div>
+                    )}
+                    {job.tech.length > 0 && (
+                        <p class="text-[0.75rem] opacity-40 mt-1 group-hover:opacity-100 group-hover:text-primary transition-[color,opacity] duration-300 ease-out">
+                            {job.tech.join(" · ")}
+                        </p>
+                    )}
+                </div>
+            </li>
+        ))}
+    </ul>
 </section>

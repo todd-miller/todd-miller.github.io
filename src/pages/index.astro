@@ -4,8 +4,11 @@ import content from "@/src/content";
 import Header from "@/src/components/Header.astro";
 import Hero from "@/src/components/Hero.astro";
 import Experience from "@/src/components/Experience.astro";
+// TODO: [enable-projects-section]
+// import Projects from "@/src/components/Projects.astro";
 import Footer from "@/src/components/Footer.astro";
-import Skills from "@/src/components/Skills.astro";
+// import GhContributions from "@/src/components/Spotlight.astro";
+import SkillsShowcase from "@/src/components/SkillsShowcase.astro";
 
 const nav = [
   { path: "/", text: "about" },
@@ -14,13 +17,17 @@ const nav = [
 ];
 ---
 
-<Layout title="Void" description={content.description}>
+<Layout title={content.meta.title} description={content.meta.description}>
   <Header nav={nav} />
 
   <main>
     <Hero name={content.name} {...content.hero} />
+    <!-- TODO: [enable-projects-section] -->
+    <!-- <Projects {...content.projects} /> -->
     <Experience {...content.experience} />
-    <Skills {...content.skills} />
+    <SkillsShowcase {...content.skillsShowcase} />
+    <!-- TODO: [enable-github-gitea-contributions tracking] -->
+    <!-- <GhContributions {...content.spotlight} /> -->
   </main>
 
   <Footer {...content.contact} />

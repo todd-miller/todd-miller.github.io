@@ -1,97 +1,321 @@
 {
-  "description": "Full Stack Engineer building performant web applications and developer tools. Currently crafting interfaces at Vercel",
-  "name": "Alex Chen",
+  "name": "Todd Miller",
+  "meta": {
+    "title": "Todd Miller — Software Engineer",
+    "description": "Results-driven software engineer with 10+ years of experience building performant web applications, developer tools, and distributed systems.",
+    "canonicalUrl": "https://toddmiller.dev",
+    "ogImage": "/og.png",
+    "keywords": ["software engineer", "full stack", "typescript", "python", "react", "aws"]
+  },
   "hero": {
-    "title": "Full Stack Engineer",
-    "p1": "building performant web applications and developer tools. Currently crafting interfaces at Vercel",
-    "p2": "Previously shipped products at Linear, Stripe, and early-stage startups. I care about clean code, fast load times, and thoughtful UX.",
-    "p3": "When not coding, you'll find me contributing to open source, writing about web performance, or exploring new frameworks."
+    "title": "Software Engineer",
+    "headline": "Results-driven software engineer with 10+ years of experience",
+    "availability": "Available",
+    "location": "Akron, OH — Remote",
+    "paragraphs": [
+      "building performant web applications, developer tools, and distributed systems. Currently contracting as a tech lead at Marketplace AI.",
+      "Previously led platform upgrades and feature integrations at Bridgestone, mentored teams at Landi Industries, and built research tooling at Kenda. I care about clean code, fast systems, and thoughtful developer experience.",
+      "When not coding, you'll find me running my Proxmox-based homelab, building CI/CD pipelines in Gitea Actions, or exploring new frameworks."
+    ]
   },
   "experience": {
     "title": "Experience",
     "jobs": [
       {
-        "period": "2024 — now",
-        "role": "Senior Engineer",
-        "company": "Vercel",
-        "description": "Building the frontend cloud. Working on the dashboard, deployment infrastructure, and developer experience."
+        "period": { "start": "2025-02", "end": null, "display": "Feb 2025 — now" },
+        "role": "Sr Software Engineer",
+        "employmentType": "Contract",
+        "company": "Marketplace AI",
+        "location": "Remote — Akron, OH",
+        "summary": "Tech lead driving team velocity, subsystem design, and CI/CD for a Node-based NX monorepo.",
+        "highlights": [
+          "Assessed and communicated risk, led team ceremonies, and instilled shared ownership as Tech Expert / Team Lead.",
+          "Set up and manage a Node-based NX monorepo with consolidated dependency management to increase team velocity.",
+          "Own subsystem design, tooling, integrations, and CI/CD pipelines end-to-end.",
+          "Engineered a custom post-quantum encryption system for AWS S3 using microservices.",
+          "Responsible for interviewing, training, and supporting team members."
+        ],
+        "tech": ["Python", "TypeScript", "Node.js", "React", "PostgreSQL", "Docker", "AWS", "GitHub Actions", "Nx"],
+        "links": []
       },
       {
-        "period": "2022 — 2024",
-        "role": "Software Engineer",
-        "company": "Linear",
-        "description": "Shipped real-time sync, keyboard-first interactions, and performance optimizations."
+        "period": { "start": "2023-06", "end": "2025-02", "display": "June 2023 — Feb 2025" },
+        "role": "Sr Software Engineer",
+        "employmentType": "Contract",
+        "company": "Bridgestone Americas Technology Center",
+        "location": "Remote — Akron, OH",
+        "summary": "Led legacy-to-modern platform integrations and the first cross-framework upgrade since 2020.",
+        "highlights": [
+          "Led large feature integrations of legacy software into a modern web platform, including tire-wear analysis, tread meshing, and a result visualization engine.",
+          "Directed global strategy for a platform upgrade across Node, Python, Docker, and other core systems — the first upgrade since 2020.",
+          "Evaluated strategies, estimated cost, and designed the initial approach to a new internal rules engine.",
+          "Designed and implemented a new pluggable client-graphics system to improve app performance, team velocity, and future feature development."
+        ],
+        "tech": ["Python", "NumPy", "Node.js", "React", "MongoDB", "AWS", "Bash", "Docker"],
+        "links": []
       },
       {
-        "period": "2020 — 2022",
-        "role": "Full Stack Developer",
-        "company": "Stripe",
-        "description": "Designed payment flows and merchant dashboards. Led the migration to React 18 and improved CI/CD pipelines."
+        "period": { "start": "2021-09", "end": "2023-06", "display": "Sept 2021 — June 2023" },
+        "role": "Sr Software Engineer (Team / Technical Lead)",
+        "employmentType": "Full-time",
+        "company": "Landi Industries",
+        "location": "Remote — Akron, OH",
+        "summary": "Technical and team lead for six developers shipping a sustainable MVP on a legacy multi-client platform.",
+        "highlights": [
+          "Led a team of six developers: distilled requirements, planned stories, scoped sprints, and drove sprint goals.",
+          "Communicated roadblocks, technical achievements, and approach philosophy to clients to build trust and transparency.",
+          "Mentored developers on testable, low-maintenance features in line with delivering a sustainable MVP.",
+          "Discovered security vulnerabilities in a client's platform authentication layer, later confirmed by pen-testing.",
+          "Implemented the first end-to-end tests for a legacy multi-client platform to attack growing technical debt.",
+          "Conducted business-critical technical spikes and evaluations of tooling and frameworks to reduce development costs."
+        ],
+        "tech": ["TypeScript", "Node.js", "React", "MongoDB", "Docker", "Kubernetes", "Azure", "GitHub Actions", "Bash"],
+        "links": []
       },
       {
-        "period": "2018 — 2020",
-        "role": "Frontend Engineer",
-        "company": "Early Startup",
-        "description": "First engineering hire. Built the core product from scratch using Next.js and Tailwind CSS."
+        "period": { "start": "2018-11", "end": "2021-10", "display": "Nov 2018 — Oct 2021" },
+        "role": "Sr Software Engineer",
+        "employmentType": "Contract",
+        "company": "Bridgestone Americas Technology Center",
+        "location": "Akron, OH",
+        "summary": "Core contributions to the global tire-design geometry engine, yielding 100x speedups and ~91% process time reduction.",
+        "highlights": [
+          "Designed and oversaw large-scale feature implementations across a multi-national team.",
+          "Core contributions and optimizations to the global tire-design geometry engine produced multiple 100x speed improvements and ~91% overall core process time reduction.",
+          "Developed and tested critical algorithms enabling designers to leverage the full potential of the tool.",
+          "Prepared and delivered technical presentations to minimize system maintenance costs and enhance peer training."
+        ],
+        "tech": ["Python", "NumPy", "JavaScript", "React", "MongoDB"],
+        "links": []
+      },
+      {
+        "period": { "start": "2017-05", "end": "2018-11", "display": "May 2017 — Nov 2018" },
+        "role": "Research Engineer & Software Developer",
+        "employmentType": "Full-time",
+        "company": "Kenda American Technical Center",
+        "location": "North Canton, OH",
+        "summary": "Full-stack engineering platform for automated and assisted engineering analysis.",
+        "highlights": [
+          "Planned, developed, tested, and deployed a full-stack environment for automated and assisted engineering analysis.",
+          "Designed, implemented, and documented a RESTful API for current and future integration with CATIA and other internal applications.",
+          "Automated and improved analysis of test results for development engineers.",
+          "Mentored team members on program architecture and Pythonic philosophy."
+        ],
+        "tech": ["Python", "Django", "DRF", "AngularJS", "Angular", "MySQL"],
+        "links": []
+      },
+      {
+        "period": { "start": "2012-06", "end": "2017-03", "display": "Jun 2012 — Mar 2017" },
+        "role": "NVH & Simulation Engineer",
+        "employmentType": "Full-time",
+        "company": "Honda R&D Americas",
+        "location": "Marysville, OH",
+        "summary": "NVH and simulation engineering for vehicle development.",
+        "highlights": [],
+        "tech": ["Python", "MATLAB", "NASTRAN"],
+        "links": []
       }
     ]
   },
-  "skills": {
+  "projects": {
+    "title": "Projects",
+    "projects": [
+      {
+        "name": "Project One",
+        "role": "Creator",
+        "period": { "start": "2024-01", "end": null, "display": "2024 — now" },
+        "summary": "A short description of project one.",
+        "highlights": [],
+        "tech": [],
+        "repo": "https://github.com/todd-miller/project-one",
+        "demo": "https://example.com/one",
+        "image": "",
+        "featured": true,
+        "links": []
+      },
+      {
+        "name": "Project Two",
+        "role": "Creator",
+        "period": { "start": "2023-06", "end": "2024-01", "display": "2023 — 2024" },
+        "summary": "A short description of project two.",
+        "highlights": [],
+        "tech": [],
+        "repo": "",
+        "demo": "https://example.com/two",
+        "image": "",
+        "featured": false,
+        "links": []
+      }
+    ]
+  },
+  "spotlight": {
+    "heading": "Spotlight",
+    "subheading": "GitHub contributions in the past year:",
+    "username": "toddwmiller"
+  },
+  "skillsShowcase": {
     "heading": "Skills",
-    "items": [
+    "subheading": "It's not just skills, but also tools:",
+    "skills": [
       {
-        "title": "React",
-        "category": "Lib",
-        "description": "UI Components, Hooks, State Management",
-        "experience_years": "4",
-        "experience_label": "years of experience"
+        "name": "TypeScript",
+        "icon": "typescript",
+        "url": "https://www.typescriptlang.org/"
       },
       {
-        "title": "TypeScript",
-        "category": "Language",
-        "description": "Static Typing, Generics, Interfaces",
-        "experience_years": "3",
-        "experience_label": "years of experience"
+        "name": "JavaScript",
+        "icon": "javascript",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript"
       },
       {
-        "title": "Astro",
-        "category": "Framework",
-        "description": "Island Architecture, Static Site Generation",
-        "experience_years": "2",
-        "experience_label": "years of experience"
+        "name": "React",
+        "icon": "react-dark",
+        "url": "https://react.dev/"
       },
       {
-        "title": "Tailwind CSS",
-        "category": "Design",
-        "description": "Utility-First CSS, Responsive Design",
-        "experience_years": "4",
-        "experience_label": "years of experience"
+        "name": "Astro",
+        "icon": "astro",
+        "url": "https://astro.build/"
       },
       {
-        "title": "Node.js",
-        "category": "Backend",
-        "description": "REST APIs, Express, Authentication",
-        "experience_years": "3",
-        "experience_label": "years of experience"
+        "name": "Node.js",
+        "icon": "nodejs-dark",
+        "url": "https://nodejs.org/"
       },
       {
-        "title": "Kali Linux",
-        "category": "Security",
-        "description": "Pentesting, SQL Injection, Network Auditing",
-        "experience_years": "1",
-        "experience_label": "year of experience"
+        "name": "Tailwind",
+        "icon": "tailwindcss-dark",
+        "url": "https://tailwindcss.com/"
+      },
+      {
+        "name": "PostgreSQL",
+        "icon": "postgresql-dark",
+        "url": "https://www.postgresql.org/"
+      },
+      {
+        "name": "Docker",
+        "icon": "docker",
+        "url": "https://www.docker.com/"
+      },
+      {
+        "name": "Git",
+        "icon": "git",
+        "url": "https://git-scm.com/"
+      },
+      {
+        "name": "Redux",
+        "icon": "redux",
+        "url": "https://react-redux.js.org/"
+      },
+      {
+        "name": "Linux",
+        "icon": "linux-dark",
+        "url": "https://www.linux.org/"
+      },
+      {
+        "name": "Neovim",
+        "icon": "neovim-dark",
+        "url": "https://neovim.io/"
+      },
+      {
+        "name": "Python",
+        "icon": "python-dark",
+        "url": "https://www.python.org/"
+      },
+      {
+        "name": "Portainer",
+        "icon": "simple-icons:portainer",
+        "url": "https://www.portainer.io/"
+      },
+      {
+        "name": "Gitea",
+        "icon": "simple-icons:gitea",
+        "url": "https://about.gitea.com/"
+      },
+      {
+        "name": "MongoDB",
+        "icon": "mongodb",
+        "url": "https://www.mongodb.com/"
+      },
+      {
+        "name": "Litestar",
+        "icon": "/icons/litestar.svg",
+        "url": "https://litestar.dev/"
+      },
+      {
+        "name": "Django",
+        "icon": "django",
+        "url": "https://www.djangoproject.com/"
+      },
+      {
+        "name": "FastAPI",
+        "icon": "fastapi",
+        "url": "https://fastapi.tiangolo.com/"
+      },
+      {
+        "name": "XState",
+        "icon": "simple-icons:xstate",
+        "url": "https://xstate.js.org/"
+      },
+      {
+        "name": "Nx",
+        "icon": "simple-icons:nx",
+        "url": "https://nx.dev/"
+      },
+      {
+        "name": "AWS",
+        "icon": "aws-dark",
+        "url": "https://aws.amazon.com/"
+      },
+      {
+        "name": "Redis",
+        "icon": "redis-dark",
+        "url": "https://redis.io/"
+      },
+      {
+        "name": "SQS",
+        "icon": "aws-dark",
+        "url": "https://aws.amazon.com/sqs/"
+      },
+      {
+        "name": "GitHub Actions",
+        "icon": "githubactions-dark",
+        "url": "https://github.com/features/actions"
+      },
+      {
+        "name": "LangGraph",
+        "icon": "simple-icons:langchain",
+        "url": "https://langchain-ai.github.io/langgraph/"
+      },
+      {
+        "name": "Nginx",
+        "icon": "nginx",
+        "url": "https://nginx.org/"
+      },
+      {
+        "name": "Zod",
+        "icon": "simple-icons:zod",
+        "url": "https://zod.dev/"
+      },
+      {
+        "name": "AWS Lambda",
+        "icon": "logos:aws-lambda",
+        "url": "https://aws.amazon.com/lambda/"
+      },
+      {
+        "name": "AWS ECS",
+        "icon": "logos:aws-ecs",
+        "url": "https://aws.amazon.com/ecs/"
       }
     ]
   },
   "contact": {
     "id": "contact",
-    "status": "Available for freelance",
+    "status": "Available",
     "email_label": "Email",
-    "email_url": "mailto:tu@email.com",
+    "email_url": "mailto:t.miller07@gmail.com",
     "github_label": "GitHub",
-    "github_url": "https://github.com/tu-usuario",
-    "x_label": "X",
-    "x_url": "https://x.com/tu-usuario",
+    "github_url": "https://github.com/todd-miller",
     "linkedin_label": "Linkedin",
     "linkedin_url": "https://linkedin.com/in/tu-perfil"
   }

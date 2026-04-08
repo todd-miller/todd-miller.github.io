@@ -1,0 +1,50 @@
+---
+import Arrow from "@lucide/astro/icons/corner-right-up";
+import type { Projects } from "@/src/content";
+
+const { title, projects } = Astro.props as Projects;
+---
+
+<section id={title.toLowerCase()} class="scroll-mt-50">
+    <h2 class="opacity-50 uppercase mb-6">{title}</h2>
+
+    <ul class="space-y-3">
+        {
+            projects.map((project) => {
+                const href = project.demo || project.repo;
+                return (
+                    <li class="group">
+                        {href ? (
+                            <a
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                name={project.name}
+                                class="mb-5 font-semibold transition-all duration-200 group-hover:text-green-500"
+                            >
+                                {project.name}
+                            </a>
+                        ) : (
+                            <span class="mb-5 font-semibold transition-all duration-200 group-hover:text-green-500">
+                                {project.name}
+                            </span>
+                        )}
+                        <Arrow class="h-3 w-3 inline transition-all text-green-500 duration-200 invisible opacity-0 group-hover:visible group-hover:opacity-100" />
+                        {project.period?.display && (
+                            <span class="opacity-40 text-[0.75rem] ml-2">{project.period.display}</span>
+                        )}
+                        <p class="opacity-50 text-[0.88rem]">{project.summary}</p>
+                        {project.highlights.length > 0 && (
+                            <ul class="opacity-50 text-[0.88rem] list-disc pl-5 mt-1">
+                                {project.highlights.map((h) => <li>{h}</li>)}
+                            </ul>
+                        )}
+                        {project.tech.length > 0 && (
+                            <p class="text-[0.75rem] opacity-40 mt-1">{project.tech.join(" · ")}</p>
+                        )}
+                    </li>
+                );
+            })
+        }
+    </ul>
+</section>

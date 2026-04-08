@@ -5,7 +5,8 @@ interface Props extends Hero {
     name: string;
 }
 
-const { name, title, p1, p2, p3 } = Astro.props as Props;
+const { name, title, paragraphs } = Astro.props as Props;
+const [first, ...rest] = paragraphs;
 ---
 
 <section id={name} class="mb-10 mt-50">
@@ -13,9 +14,8 @@ const { name, title, p1, p2, p3 } = Astro.props as Props;
     <div class="[&_p]:mb-6 leading-7">
         <p>
             <span class="text-green-500">{title} </span>
-            <span class="opacity-50">{p1}</span>
+            <span class="opacity-50">{first}</span>
         </p>
-        <p class="opacity-50">{p2}</p>
-        <p class="opacity-50">{p3}</p>
+        {rest.map((p) => <p class="opacity-50">{p}</p>)}
     </div>
 </section>

@@ -5,53 +5,55 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(98.8% 0.006 290);
-  --foreground: oklch(17% 0.018 285);
+  /* Rosé Pine Dawn */
+  --background: #faf4ed;        /* base */
+  --foreground: #575279;        /* text */
 
-  --primary: oklch(50% 0.17 270);
-  --primary-foreground: oklch(98.5% 0.004 270);
+  --primary: #907aa9;            /* iris */
+  --primary-foreground: #faf4ed;
 
-  --secondary: oklch(96% 0.01 285);
-  --secondary-foreground: oklch(26% 0.02 285);
+  --secondary: #fffaf3;          /* surface */
+  --secondary-foreground: #575279;
 
-  --muted: oklch(94% 0.012 285);
-  --muted-foreground: oklch(52% 0.018 285);
+  --muted: #f2e9e1;              /* overlay */
+  --muted-foreground: #797593;   /* subtle */
 
-  --accent: oklch(90% 0.08 195);
-  --accent-foreground: oklch(28% 0.07 210);
+  --accent: #56949f;             /* foam */
+  --accent-foreground: #faf4ed;
 
-  --border: oklch(88% 0.012 285);
-  --input: oklch(90% 0.012 285);
-  --ring: oklch(50% 0.17 270);
+  --border: #dfdad9;             /* highlight med */
+  --input: #f4ede8;              /* highlight low */
+  --ring: #907aa9;               /* iris */
 
   --radius: 0.625rem;
 
-  --destructive: oklch(58% 0.21 25);
-  --destructive-foreground: oklch(98% 0.004 25);
+  --destructive: #b4637a;        /* love */
+  --destructive-foreground: #faf4ed;
 }
 
 .dark {
-  --background: oklch(14% 0.012 285);
-  --foreground: oklch(96% 0.01 285);
+  /* Rosé Pine (Main) */
+  --background: #191724;         /* base */
+  --foreground: #e0def4;         /* text */
 
-  --primary: oklch(64% 0.18 270);
-  --primary-foreground: oklch(14% 0.01 270);
+  --primary: #c4a7e7;             /* iris */
+  --primary-foreground: #191724;
 
-  --secondary: oklch(22% 0.016 285);
-  --secondary-foreground: oklch(94% 0.012 285);
+  --secondary: #1f1d2e;           /* surface */
+  --secondary-foreground: #e0def4;
 
-  --muted: oklch(20% 0.014 285);
-  --muted-foreground: oklch(62% 0.02 285);
+  --muted: #26233a;               /* overlay */
+  --muted-foreground: #908caa;    /* subtle */
 
-  --accent: oklch(38% 0.09 200);
-  --accent-foreground: oklch(96% 0.02 195);
+  --accent: #9ccfd8;              /* foam */
+  --accent-foreground: #191724;
 
-  --border: oklch(28% 0.016 285);
-  --input: oklch(26% 0.016 285);
-  --ring: oklch(70% 0.18 270);
+  --border: #403d52;              /* highlight med */
+  --input: #21202e;               /* highlight low */
+  --ring: #c4a7e7;                /* iris */
 
-  --destructive: oklch(48% 0.19 25);
-  --destructive-foreground: oklch(96% 0.008 25);
+  --destructive: #eb6f92;         /* love */
+  --destructive-foreground: #191724;
 }
 
 
