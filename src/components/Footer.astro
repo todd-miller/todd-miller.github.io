@@ -1,22 +1,13 @@
 ---
-import type { Contact } from "@/src/content";
+import Contact from "@/src/components/Contact.astro";
+import content from "@/src/content";
 
-const { id, status, email_label, email_url, github_label, github_url, x_label, x_url, linkedin_label, linkedin_url } = Astro.props as Contact;
+const { contact } = content;
 ---
 
 <footer
-    id={id}
+    id={contact.id}
     class="my-24 border-t pt-8 text-sm grid grid-cols-1 gap-3 place-items-center"
 >
-    <div>
-        <span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>
-        <span class="opacity-70 uppercase">{status}</span>
-        <span class="inline-block w-2 h-2 rounded-full bg-green-500 ml-2 animate-pulse"></span>
-    </div>
-    <div class="flex gap-4 [&_a]:opacity-70 [&_a]:hover:opacity-100 [&_a]:transition-colors [&_a]:duration-200">
-        <a href={email_url}>{email_label}</a>
-        <a href={github_url} rel="nofollow">{github_label}</a>
-        <a href={x_url} rel="nofollow">{x_label}</a>
-        <a href={linkedin_url} rel="nofollow">{linkedin_label}</a>
-    </div>
+  <!-- <Contact {...contact} /> -->
 </footer>

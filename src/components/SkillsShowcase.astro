@@ -19,8 +19,10 @@ const rows = chunk(skills, ROW_COUNT).map((rowSkills, i) => ({
 const duplicate = <T,>(arr: T[]) => [...arr, ...arr, ...arr, ...arr];
 ---
 
-<section class="mt-20">
-  <h2 class="opacity-50 uppercase mb-2">{heading}</h2>
+<section class="group/section mt-20">
+  <div class="flex w-full items-center gap-3 mb-6 mt-15 py-4 bg-background">
+    <h2 class="uppercase duration-300 group-hover/section:text-primary">{heading}</h2>
+  </div>
   {subheading && <p class="text-white/50 text-sm mb-6">{subheading}</p>}
 
   <div class="skills-container relative py-2 overflow-hidden">
@@ -36,15 +38,15 @@ const duplicate = <T,>(arr: T[]) => [...arr, ...arr, ...arr, ...arr];
               class={cls("skills-track flex w-max will-change-transform")}
             >
               {skills.map((skill) => {
-                const Tag = skill.url ? "a" : "div";
-                const props = skill.url
-                  ? { href: skill.url, target: "_blank", rel: "noopener noreferrer" }
-                  : {};
                 return (
-                  <div class="skill-card mx-2">
-                    <Tag
+                  <a
+                    class="skill-card mx-2"
+                    href={skill.url ?? "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <div
                       class="skill-inner flex items-center gap-2 px-3 py-1.5 whitespace-nowrap transition-colors"
-                      {...props}
                     >
                       <img
                         src={
@@ -58,8 +60,8 @@ const duplicate = <T,>(arr: T[]) => [...arr, ...arr, ...arr, ...arr];
                         loading="lazy"
                       />
                       <span class="text-sm font-medium">{skill.name}</span>
-                    </Tag>
-                  </div>
+                    </div>
+                  </a>
                 );
               })}
             </div>
@@ -92,9 +94,11 @@ const duplicate = <T,>(arr: T[]) => [...arr, ...arr, ...arr, ...arr];
       // Start offset: reverse rows begin shifted so they have room to scroll right.
       let offset = dir === 1 ? -cycle : 0;
       let velocity = dir * ROW_SPEED; // px/sec
+      let pointerDown = false;
       let dragging = false;
       let hovering = false;
       let pointerId = null;
+      const DRAG_THRESHOLD = 5;
       let lastX = 0;
       let lastT = 0;
       let dragVel = 0;
@@ -130,33 +134,42 @@ const duplicate = <T,>(arr: T[]) => [...arr, ...arr, ...arr, ...arr];
 
       row.addEventListener("pointerdown", (e) => {
         if (e.pointerType === "mouse" && e.button !== 0) return;
-        dragging = true;
+        pointerDown = true;
+        dragging = false;
         pointerId = e.pointerId;
         lastX = e.clientX;
         lastT = performance.now();
         dragVel = 0;
         dragDist = 0;
-        row.setPointerCapture(pointerId);
-        row.classList.add("is-dragging");
       });
 
       row.addEventListener("pointermove", (e) => {
-        if (!dragging || e.pointerId !== pointerId) return;
+        if (!pointerDown || e.pointerId !== pointerId) return;
         const now = performance.now();
         const dx = e.clientX - lastX;
         const dt = (now - lastT) / 1000;
         lastX = e.clientX;
         lastT = now;
         dragDist += Math.abs(dx);
+        if (!dragging && dragDist > DRAG_THRESHOLD) {
+          dragging = true;
+          try { row.setPointerCapture(pointerId); } catch {}
+          row.classList.add("is-dragging");
+        }
+        if (!dragging) return;
         if (dt > 0) dragVel = dx / dt;
         offset = wrap(offset + dx);
         apply();
       });
 
       const endDrag = (e) => {
-        if (!dragging || (e && e.pointerId !== pointerId)) return;
+        if (!pointerDown || (e && e.pointerId !== pointerId)) return;
+        pointerDown = false;
+        const wasDragging = dragging;
         dragging = false;
-        try { row.releasePointerCapture(pointerId); } catch {}
+        if (wasDragging) {
+          try { row.releasePointerCapture(pointerId); } catch {}
+        }
         pointerId = null;
         row.classList.remove("is-dragging");
         // Resume at baseline velocity (could blend in dragVel for inertia).
@@ -165,15 +178,39 @@ const duplicate = <T,>(arr: T[]) => [...arr, ...arr, ...arr, ...arr];
       row.addEventListener("pointerup", endDrag);
       row.addEventListener("pointercancel", endDrag);
 
-      // Suppress link clicks after a real drag.
+      // Intercept skill clicks: suppress after drag, otherwise open in background tab.
       row.addEventListener(
         "click",
         (e) => {
-          if (dragDist > 5) {
+          const wasDrag = dragDist > 5;
+          dragDist = 0;
+          if (wasDrag) {
             e.preventDefault();
             e.stopPropagation();
+            return;
           }
-          dragDist = 0;
+          const anchor = e.target instanceof Element ? e.target.closest("a.skill-card") : null;
+          if (!anchor) return;
+          // Only rewrite plain left-clicks; let modified clicks use native behavior.
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+          e.preventDefault();
+          e.stopPropagation();
+          const href = anchor.getAttribute("href");
+          if (!href || href === "#") return;
+          // Simulate cmd/ctrl+click so the browser opens a background tab.
+          const isMac = navigator.platform.toUpperCase().includes("MAC");
+          const synthetic = new MouseEvent("click", {
+            bubbles: false,
+            cancelable: true,
+            view: window,
+            ctrlKey: !isMac,
+            metaKey: isMac,
+          });
+          const temp = document.createElement("a");
+          temp.href = href;
+          temp.target = "_blank";
+          temp.rel = "noopener noreferrer";
+          temp.dispatchEvent(synthetic);
         },
         true
       );
@@ -192,7 +229,13 @@ const duplicate = <T,>(arr: T[]) => [...arr, ...arr, ...arr, ...arr];
   .skill-card {
     border-radius: 0.375rem;
     background-color: rgb(255 255 255 / 0.05);
-    border: 1px solid rgb(255 255 255 / 0.1);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+    box-shadow: 0 0 0 color-mix(in srgb, var(--color-primary) 0%, transparent);
+    transition: border-color 400ms ease-out, box-shadow 400ms ease-out;
+  }
+  body:has(.job-company:hover) .skill-card {
+    border-color: color-mix(in srgb, var(--color-primary) 80%, transparent);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--color-primary) 40%, transparent);
   }
   .skill-inner:hover {
     background: rgb(255 255 255 / 0.05);

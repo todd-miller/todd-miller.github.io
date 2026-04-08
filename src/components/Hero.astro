@@ -9,11 +9,11 @@ const { name, title, paragraphs } = Astro.props as Props;
 const [first, ...rest] = paragraphs;
 ---
 
-<section id={name} class="mb-10 mt-50">
-    <h1 class="mb-4 font-semibold text-xl">{name}</h1>
+<section class="mb-10 mt-50">
+    <h1 id="about" class="mb-4 font-semibold text-xl scroll-mt-50">{name}</h1>
     <div class="[&_p]:mb-6 leading-7">
         <p>
-            <span class="text-green-500">{title} </span>
+            <span class="text-primary">{title} </span>
             <span class="opacity-50">{first}</span>
         </p>
         {rest.map((p) => <p class="opacity-50">{p}</p>)}

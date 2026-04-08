@@ -5,7 +5,14 @@
     "description": "Results-driven software engineer with 10+ years of experience building performant web applications, developer tools, and distributed systems.",
     "canonicalUrl": "https://toddmiller.dev",
     "ogImage": "/og.png",
-    "keywords": ["software engineer", "full stack", "typescript", "python", "react", "aws"]
+    "keywords": [
+      "software engineer",
+      "full stack",
+      "typescript",
+      "python",
+      "react",
+      "aws"
+    ]
   },
   "hero": {
     "title": "Software Engineer",
@@ -13,16 +20,19 @@
     "availability": "Available",
     "location": "Akron, OH — Remote",
     "paragraphs": [
-      "building performant web applications, developer tools, and distributed systems. Currently contracting as a tech lead at Marketplace AI.",
-      "Previously led platform upgrades and feature integrations at Bridgestone, mentored teams at Landi Industries, and built research tooling at Kenda. I care about clean code, fast systems, and thoughtful developer experience.",
-      "When not coding, you'll find me running my Proxmox-based homelab, building CI/CD pipelines in Gitea Actions, or exploring new frameworks."
+      "building web apps, dev tools, and distributed systems that make teams faster and users happier. Currently open to new opportunities.",
+      "Along the way I've led platform upgrades and feature work at Bridgestone (including tire-design engine optimizations that hit 100x speedups), mentored a team of six at Landi, and built full-stack research tooling at Kenda. What I love most is working shoulder-to-shoulder with other engineers on hard problems.",
+      "Off the clock, I like building small applications, writing new features into my development tools, and honing new skills with new technologies."
     ]
   },
   "experience": {
     "title": "Experience",
     "jobs": [
       {
-        "period": { "start": "2025-02", "end": null, "display": "Feb 2025 — now" },
+        "period": {
+          "start": "2025-02",
+          "end": null
+        },
         "role": "Sr Software Engineer",
         "employmentType": "Contract",
         "company": "Marketplace AI",
@@ -35,11 +45,25 @@
           "Engineered a custom post-quantum encryption system for AWS S3 using microservices.",
           "Responsible for interviewing, training, and supporting team members."
         ],
-        "tech": ["Python", "TypeScript", "Node.js", "React", "PostgreSQL", "Docker", "AWS", "GitHub Actions", "Nx"],
+        "tech": [
+          "Python",
+          "TypeScript",
+          "Node.js",
+          "React",
+          "PostgreSQL",
+          "Docker",
+          "AWS",
+          "GitHub Actions",
+          "Nx"
+        ],
         "links": []
       },
       {
-        "period": { "start": "2023-06", "end": "2025-02", "display": "June 2023 — Feb 2025" },
+        "period": {
+          "start": "2023-06",
+          "end": "2025-02",
+          "display": "June 2023 — Feb 2025"
+        },
         "role": "Sr Software Engineer",
         "employmentType": "Contract",
         "company": "Bridgestone Americas Technology Center",
@@ -51,11 +75,24 @@
           "Evaluated strategies, estimated cost, and designed the initial approach to a new internal rules engine.",
           "Designed and implemented a new pluggable client-graphics system to improve app performance, team velocity, and future feature development."
         ],
-        "tech": ["Python", "NumPy", "Node.js", "React", "MongoDB", "AWS", "Bash", "Docker"],
+        "tech": [
+          "Python",
+          "NumPy",
+          "Node.js",
+          "React",
+          "MongoDB",
+          "AWS",
+          "Bash",
+          "Docker"
+        ],
         "links": []
       },
       {
-        "period": { "start": "2021-09", "end": "2023-06", "display": "Sept 2021 — June 2023" },
+        "period": {
+          "start": "2021-09",
+          "end": "2023-06",
+          "display": "Sept 2021 — June 2023"
+        },
         "role": "Sr Software Engineer (Team / Technical Lead)",
         "employmentType": "Full-time",
         "company": "Landi Industries",
@@ -69,11 +106,25 @@
           "Implemented the first end-to-end tests for a legacy multi-client platform to attack growing technical debt.",
           "Conducted business-critical technical spikes and evaluations of tooling and frameworks to reduce development costs."
         ],
-        "tech": ["TypeScript", "Node.js", "React", "MongoDB", "Docker", "Kubernetes", "Azure", "GitHub Actions", "Bash"],
+        "tech": [
+          "TypeScript",
+          "Node.js",
+          "React",
+          "MongoDB",
+          "Docker",
+          "Kubernetes",
+          "Azure",
+          "GitHub Actions",
+          "Bash"
+        ],
         "links": []
       },
       {
-        "period": { "start": "2018-11", "end": "2021-10", "display": "Nov 2018 — Oct 2021" },
+        "period": {
+          "start": "2018-11",
+          "end": "2021-10",
+          "display": "Nov 2018 — Oct 2021"
+        },
         "role": "Sr Software Engineer",
         "employmentType": "Contract",
         "company": "Bridgestone Americas Technology Center",
@@ -85,11 +136,21 @@
           "Developed and tested critical algorithms enabling designers to leverage the full potential of the tool.",
           "Prepared and delivered technical presentations to minimize system maintenance costs and enhance peer training."
         ],
-        "tech": ["Python", "NumPy", "JavaScript", "React", "MongoDB"],
+        "tech": [
+          "Python",
+          "NumPy",
+          "JavaScript",
+          "React",
+          "MongoDB"
+        ],
         "links": []
       },
       {
-        "period": { "start": "2017-05", "end": "2018-11", "display": "May 2017 — Nov 2018" },
+        "period": {
+          "start": "2017-05",
+          "end": "2018-11",
+          "display": "May 2017 — Nov 2018"
+        },
         "role": "Research Engineer & Software Developer",
         "employmentType": "Full-time",
         "company": "Kenda American Technical Center",
@@ -101,18 +162,33 @@
           "Automated and improved analysis of test results for development engineers.",
           "Mentored team members on program architecture and Pythonic philosophy."
         ],
-        "tech": ["Python", "Django", "DRF", "AngularJS", "Angular", "MySQL"],
+        "tech": [
+          "Python",
+          "Django",
+          "DRF",
+          "AngularJS",
+          "Angular",
+          "MySQL"
+        ],
         "links": []
       },
       {
-        "period": { "start": "2012-06", "end": "2017-03", "display": "Jun 2012 — Mar 2017" },
+        "period": {
+          "start": "2012-06",
+          "end": "2017-03",
+          "display": "Jun 2012 — Mar 2017"
+        },
         "role": "NVH & Simulation Engineer",
         "employmentType": "Full-time",
         "company": "Honda R&D Americas",
         "location": "Marysville, OH",
         "summary": "NVH and simulation engineering for vehicle development.",
         "highlights": [],
-        "tech": ["Python", "MATLAB", "NASTRAN"],
+        "tech": [
+          "Python",
+          "MATLAB",
+          "NASTRAN"
+        ],
         "links": []
       }
     ]
@@ -123,7 +199,11 @@
       {
         "name": "Project One",
         "role": "Creator",
-        "period": { "start": "2024-01", "end": null, "display": "2024 — now" },
+        "period": {
+          "start": "2024-01",
+          "end": null,
+          "display": "2024 — now"
+        },
         "summary": "A short description of project one.",
         "highlights": [],
         "tech": [],
@@ -136,7 +216,11 @@
       {
         "name": "Project Two",
         "role": "Creator",
-        "period": { "start": "2023-06", "end": "2024-01", "display": "2023 — 2024" },
+        "period": {
+          "start": "2023-06",
+          "end": "2024-01",
+          "display": "2023 — 2024"
+        },
         "summary": "A short description of project two.",
         "highlights": [],
         "tech": [],
@@ -317,6 +401,6 @@
     "github_label": "GitHub",
     "github_url": "https://github.com/todd-miller",
     "linkedin_label": "Linkedin",
-    "linkedin_url": "https://linkedin.com/in/tu-perfil"
+    "linkedin_url": "https://www.linkedin.com/in/todd-miller-a97030134/"
   }
 }

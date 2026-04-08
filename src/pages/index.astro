@@ -3,6 +3,7 @@ import Layout from "@/src/layouts/Layout.astro";
 import content from "@/src/content";
 import Header from "@/src/components/Header.astro";
 import Hero from "@/src/components/Hero.astro";
+import Contact from "@/src/components/Contact.astro";
 import Experience from "@/src/components/Experience.astro";
 // TODO: [enable-projects-section]
 // import Projects from "@/src/components/Projects.astro";
@@ -11,9 +12,9 @@ import Footer from "@/src/components/Footer.astro";
 import SkillsShowcase from "@/src/components/SkillsShowcase.astro";
 
 const nav = [
-  { path: "/", text: "about" },
-  { path: "#experience", text: "experience" },
+  { path: "#about", text: "about" },
   { path: "#contact", text: "contact" },
+  { path: "#experience", text: "experience" },
 ];
 ---
 
@@ -24,6 +25,7 @@ const nav = [
     <Hero name={content.name} {...content.hero} />
     <!-- TODO: [enable-projects-section] -->
     <!-- <Projects {...content.projects} /> -->
+    <Contact {...content.contact} />
     <Experience {...content.experience} />
     <SkillsShowcase {...content.skillsShowcase} />
     <!-- TODO: [enable-github-gitea-contributions tracking] -->
