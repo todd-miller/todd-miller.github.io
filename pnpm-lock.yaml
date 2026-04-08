@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@ariaskit/astro-i18n':
-        specifier: ^0.0.8
-        version: 0.0.8(astro@5.17.1(@types/node@25.2.0)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.57.1)(typescript@5.9.3))
       '@astrojs/sitemap':
         specifier: ^3.7.0
         version: 3.7.0
@@ -38,12 +35,6 @@ importers:
         version: 25.2.0
 
 packages:
-
-  '@ariaskit/astro-i18n@0.0.8':
-    resolution: {integrity: sha512-7sWEioWdtCofnZZWJtdYndtkRiBIrLUO8Z1Ezo8qxY5dG+mPWzdqDipL3b0BMBF/duKI5lRwT0X5/tj+QyPfiQ==}
-    hasBin: true
-    peerDependencies:
-      astro: '>=5.0.0'
 
   '@astrojs/compiler@2.13.0':
     resolution: {integrity: sha512-mqVORhUJViA28fwHYaWmsXSzLO9osbdZ5ImUfxBarqsYdMlPbqAqGJCxsNzvppp1BEzc1mJNjOVvQqeDN8Vspw==}
@@ -1739,10 +1730,6 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
 snapshots:
-
-  '@ariaskit/astro-i18n@0.0.8(astro@5.17.1(@types/node@25.2.0)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.57.1)(typescript@5.9.3))':
-    dependencies:
-      astro: 5.17.1(@types/node@25.2.0)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.57.1)(typescript@5.9.3)
 
   '@astrojs/compiler@2.13.0': {}
 

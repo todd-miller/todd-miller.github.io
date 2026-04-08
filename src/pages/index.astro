@@ -1,3 +1,27 @@
 ---
-return Astro.redirect('/en');
+import Layout from "@/src/layouts/Layout.astro";
+import content from "@/src/content";
+import Header from "@/src/components/Header.astro";
+import Hero from "@/src/components/Hero.astro";
+import Experience from "@/src/components/Experience.astro";
+import Footer from "@/src/components/Footer.astro";
+import Skills from "@/src/components/Skills.astro";
+
+const nav = [
+  { path: "/", text: "about" },
+  { path: "#experience", text: "experience" },
+  { path: "#contact", text: "contact" },
+];
 ---
+
+<Layout title="Void" description={content.description}>
+  <Header nav={nav} />
+
+  <main>
+    <Hero name={content.name} {...content.hero} />
+    <Experience {...content.experience} />
+    <Skills {...content.skills} />
+  </main>
+
+  <Footer {...content.contact} />
+</Layout>
