@@ -10,7 +10,7 @@ const HIGHLIGHTS_DURATION = "800ms";
 ---
 
 <section id={title.toLowerCase()} class="group/section scroll-mt-50" style={`--highlights-duration: ${HIGHLIGHTS_DURATION}`}>
-    <SectionHeader title={title} href="/resume.pdf" download ariaLabel="Download resume PDF">
+    <SectionHeader title={title} href={`${import.meta.env.BASE_URL}resume.pdf`} download ariaLabel="Download resume PDF">
         <Fragment slot="trailing">
             <FileDown class="size-4 transition-[color,filter] duration-300 group-hover/section:text-accent group-hover/section:drop-shadow-[0_0_2px_color-mix(in_srgb,var(--color-primary)_60%,transparent)]" />
             <span class="hidden group-hover/section:inline text-sm text-accent transition-[color,filter] duration-300 drop-shadow-[0_0_2px_color-mix(in_srgb,var(--color-primary)_60%,transparent)]">(download resume)</span>

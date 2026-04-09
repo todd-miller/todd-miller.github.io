@@ -1,46 +1,76 @@
 # Deployment Plan
 
-## Plan 1: Deploy to GitHub Pages
+**Flow:** push to Gitea (origin) → Gitea runs CI → on green, Gitea fast-forward mirrors `main` to GitHub → GitHub Pages workflow deploys on push.
 
-**Goal:** get the site live on GitHub Pages via manual `workflow_dispatch`.
+Gitea is the source of truth and the gate. GitHub is a publish target; its only job is building with the Pages base and running `deploy-pages`. Same commit SHA on both remotes, linear history, no PRs.
 
-1. **Decide the URL shape.** Two options:
-   - [x] User/org site (`<user>.github.io`) → `site: "https://<user>.github.io/"`, no `base`.
-   - Project site (`<user>.github.io/mysite`) → `site: "https://<user>.github.io"`, `base: "/mysite"`.
-2. **Update `astro.config.mjs`** with the chosen `site` (and `base` if needed). Any absolute links/assets in components should use `import.meta.env.BASE_URL` if you picked a project site.
-3. **Push to GitHub.** Confirm the non-origin remote exists (`git remote -v`); add one if not (`git remote add github …`). Push `main`.
-4. **Enable Pages** in the GitHub repo: Settings → Pages → Source = "GitHub Actions".
-5. **Trigger the workflow** manually: Actions tab → "Deploy to GitHub Pages" → Run workflow.
-6. **Verify** the deployment URL resolves, styles load, and internal links work (the `base` path is the common failure mode).
-7. **Smoke-test locally first** if you want to de-risk step 6: `pnpm build && pnpm preview` after setting `base`.
+```
+dev → git push gitea main
+         │
+         ▼
+   Gitea CI (ci.yml)
+   • install, astro check, build
+         │ pass
+         ▼
+   Gitea mirror job (cd.yml)
+   • git push github main:main  (fast-forward only)
+         │
+         ▼
+   GitHub Pages workflow (.github/workflows/cd.yml)
+   • triggers on push to main
+   • build with Pages base → deploy-pages
+```
 
-### Risks / gotchas
-- If `base` is set, hardcoded `/foo` links break — they need to be `${import.meta.env.BASE_URL}foo`.
-- The workflow uses `pnpm-lock.yaml` with `--frozen-lockfile`; make sure it's committed.
+Graduate to a PR-based promotion flow later if you ever want GitHub-only checks (Lighthouse budget, link check, visual diff) to *block* publish. Until then, the mirror is simpler and faster.
 
 ---
 
-## Plan 2: Validate Gitea CI/CD
+## Plan 1: Gitea CI + mirror to GitHub
 
-**Goal:** confirm the Gitea workflows build and deploy to the homelab target.
+**Goal:** green Gitea build = commit on GitHub `main`.
 
-1. **Confirm Gitea Actions is enabled** on your instance and at least one runner is registered with a label matching `ubuntu-latest` (or change `runs-on` in both files to match your runner's label, e.g. `self-hosted`).
-2. **Pick the deploy target.** Decide which homelab host + path serves the static files (e.g. an nginx/caddy doc root). Note the user, host, and absolute path.
-3. **Generate a deploy SSH key.** `ssh-keygen -t ed25519 -f ~/.ssh/mysite_deploy -N ""`. Append the `.pub` to `~/.ssh/authorized_keys` on the target host (ideally restricted to the deploy path via `command=`/`rrsync`).
-4. **Add Gitea repo secrets:** `DEPLOY_SSH_KEY` (private key contents), `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_PATH`.
-5. **Push to the Gitea remote.** Add it if missing (`git remote add gitea …`). First push should trigger `ci.yml` and `cd.yml` on `main`.
-6. **Watch the first run.** Expected failure modes to check:
-   - Runner can't pull Node/pnpm actions → runner may need internet or an actions proxy/mirror (Gitea-specific; `ACTIONS_CACHE_URL` etc.).
-   - `actions/upload-artifact@v3` may need Gitea's artifact server configured; if not, drop that step from `ci.yml`.
-   - `ssh-keyscan` fails → host unreachable from runner network.
-   - rsync permission denied → authorized_keys or path ownership issue on target.
-7. **Verify the site** is served from the homelab host after the run succeeds.
-8. **Optional hardening:**
-   - Restrict `cd.yml` to only run after `ci.yml` passes (use `workflow_run` or merge into one workflow with job `needs`).
-   - Add a `concurrency` group so overlapping pushes don't race the rsync.
+1. **Confirm Gitea Actions + runner.** Containerized runner online with a label matching `runs-on`. Adjust `runs-on` in `.gitea/workflows/*.yml` if your runner label isn't `ubuntu-latest`.
+2. **Make `ci.yml` the real gate.** Install → `astro check` → `pnpm build`. Drop `actions/upload-artifact@v3` unless Gitea's artifact server is configured — GitHub rebuilds from source, the artifact is dead weight.
+3. **Rewrite `cd.yml` as a mirror job.** Trigger: `workflow_run` after `ci.yml` succeeds on `main` (or consolidate into one workflow with `needs:`). Steps:
+   - Checkout with `fetch-depth: 0` (need real history, not a shallow clone, for a fast-forward push).
+   - Add GitHub as a remote using `https://x-access-token:${GITHUB_PUSH_TOKEN}@github.com/${GITHUB_REPO}.git`.
+   - `git push github main:main` — **no `--force`**. If it ever rejects, that's a signal something diverged and you want to know, not paper over.
+4. **Gitea repo secrets:**
+   - `GITHUB_PUSH_TOKEN` — fine-grained PAT scoped to the one GitHub repo, `contents:write` only.
+   - `GITHUB_REPO` — e.g. `toddmiller/mysite`.
+5. **Runner network check.** Containerized runner must reach `github.com` over HTTPS. Homelab runners on isolated LANs need egress or a proxy.
+6. **Seed GitHub.** One-time: `git push github main` manually so the remote branch exists and Pages has something to point at.
+7. **First real push.** `git push gitea main`. Watch `ci.yml` → `cd.yml` → commit appears on GitHub → Pages workflow fires.
 
-### Open questions to resolve before starting Plan 2
-- Is the homelab target a VM/container with SSH, or something else (e.g. direct path on the Gitea host)? If it's the same host as the Gitea runner, you can skip SSH entirely and just `cp -r`.
-  - its a docker container that should be exposed
-- Is the Gitea runner containerized (docker) or host-mode? Containerized runners often can't reach homelab LAN hosts without extra network config.
-  - yes its containerized
+### Risks / gotchas
+- Containerized Gitea runners often can't pull `actions/*` without mirror/cache config — fix at the runner, not in YAML.
+- A non-fast-forward rejection means Gitea and GitHub diverged. Investigate (did someone push to GitHub directly?) rather than force-pushing.
+- PAT expiry silently breaks mirroring. Use a long-lived fine-grained token and note the expiry.
+- Don't push directly to GitHub. Treat it as read-only downstream; all commits originate on Gitea.
+
+---
+
+## Plan 2: GitHub Pages deploy
+
+**Goal:** every push to GitHub `main` (i.e. every mirrored commit) builds and deploys Pages.
+
+1. **Decide URL shape:**
+   - [x] User/org site (`<user>.github.io`) → `site: "https://<user>.github.io/"`, no `base`.
+   - Project site → `site + base: "/mysite"`.
+2. **Update `astro.config.mjs`** with the chosen `site` (and `base` if project site). Hardcoded absolute links/assets must use `import.meta.env.BASE_URL`.
+3. **Update `.github/workflows/cd.yml` triggers:** add `push: branches: [main]` alongside the existing `workflow_dispatch`. Keep dispatch for manual re-deploys.
+4. **Enable Pages:** Settings → Pages → Source = "GitHub Actions".
+5. **Smoke-test locally:** `pnpm build && pnpm preview` with the final `base`.
+6. **Merge path:** there is none — the mirrored push *is* the release.
+
+### Risks / gotchas
+- If `base` is set, hardcoded `/foo` links break.
+- `pnpm-lock.yaml` must be committed (`--frozen-lockfile`).
+- Any "GitHub-only check" you add here runs *post-publish* and can only alert, not block. If that's not acceptable for a given check, that's the signal to switch to the PR-based promotion flow.
+
+---
+
+## Resolved context
+- Homelab rsync deploy (original Plan 2) is dropped.
+- Containerized Gitea runner confirmed — egress to `github.com` is the critical network requirement.
+- No promotion PR, no auto-merge config. Mirror only. Revisit if a blocking GitHub-only check becomes necessary.

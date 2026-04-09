@@ -9,7 +9,10 @@ const ICONIFY_BASE = "https://api.iconify.design";
  *   3. Bare name:         "typescript"            → Iconify skill-icons set
  */
 export function resolveIconUrl(icon: string): string {
-    if (icon.startsWith("/")) return icon;
+    if (icon.startsWith("/")) {
+        const base = import.meta.env.BASE_URL;
+        return `${base}${icon.slice(1)}`;
+    }
 
     const isPrefixed = icon.includes(":");
     const path = isPrefixed ? icon.replace(":", "/") : `skill-icons/${icon}`;

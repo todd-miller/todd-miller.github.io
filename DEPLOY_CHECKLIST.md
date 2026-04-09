@@ -1,72 +1,67 @@
 # Deploy Checklist
 
-Companion to [DEPLOY_PLAN.md](./DEPLOY_PLAN.md). Work top-to-bottom; don't skip the local checks.
+Companion to [DEPLOY_PLAN.md](./DEPLOY_PLAN.md). Flow: Gitea CI gates → Gitea fast-forward mirrors `main` to GitHub → GitHub Pages deploys on push.
 
-## Pre-flight (both plans)
+## Pre-flight
 - [ ] `pnpm install` clean on a fresh clone (no lockfile drift)
 - [ ] `pnpm-lock.yaml` committed and up to date
-- [ ] `pnpm check` / `astro check` passes (no type or content errors)
-- [ ] `pnpm build` succeeds locally with no warnings you don't recognize
+- [ ] `astro check` passes
+- [ ] `pnpm build` succeeds locally, no unfamiliar warnings
 - [ ] `pnpm preview` renders the built site correctly
 - [ ] No secrets, `.env` files, or local-only paths committed
-- [ ] `git status` clean; intended branch is `main`
+- [ ] `git status` clean; working branch is `main`
+- [ ] URL shape decided (user-site vs project-site); `astro.config.mjs` `site`/`base` match
+- [ ] Grepped for hardcoded `/` links/assets; absolute refs use `import.meta.env.BASE_URL` if `base` is set
+- [ ] `pnpm build && pnpm preview` works *with* the final `base`
 
-## Plan 1: GitHub Pages
-### Config
-- [ ] Decided user-site vs project-site URL shape
-- [ ] `astro.config.mjs` `site` matches the chosen URL exactly (trailing slash included)
-- [ ] `base` set iff project-site; matches repo name
-- [ ] Grepped for hardcoded `/` links/assets; any absolute refs use `import.meta.env.BASE_URL`
-- [ ] Favicon, OG images, and fonts load under the `base` path
-- [ ] `pnpm build && pnpm preview` works *with* the final `base` value
+## Plan 1: Gitea CI + mirror
+### Runner
+- [ ] Gitea Actions enabled
+- [ ] Containerized runner online with a label matching `runs-on`
+- [ ] Runner has HTTPS egress to `github.com` (verify with a one-off job if unsure)
+- [ ] Runner can pull `actions/*` (mirror / `ACTIONS_CACHE_URL` configured if needed)
 
-### Repo / Actions
-- [ ] GitHub remote exists and `main` is pushed
+### CI (`ci.yml`)
+- [ ] Installs, runs `astro check`, runs `pnpm build`
+- [ ] `actions/upload-artifact@v3` step removed (GitHub rebuilds; artifact unused)
+- [ ] Runs on `push` to `main` and `pull_request` to `main`
+- [ ] First run is green on Gitea
+
+### Mirror (`cd.yml`)
+- [ ] Triggers only after `ci.yml` succeeds on `main` (`workflow_run` or consolidated `needs:`)
+- [ ] Gitea repo secrets set: `GITHUB_PUSH_TOKEN` (fine-grained PAT, `contents:write` only), `GITHUB_REPO`
+- [ ] PAT scoped to the single GitHub repo; expiry date noted somewhere durable
+- [ ] Checkout uses `fetch-depth: 0`
+- [ ] Remote added via `https://x-access-token:${TOKEN}@github.com/${REPO}.git` (no key committed)
+- [ ] Push is `git push github main:main` — **no `--force`**
+- [ ] GitHub `main` seeded once manually so the remote branch exists
+- [ ] First mirrored push lands a commit on GitHub with matching SHA
+
+## Plan 2: GitHub Pages
+### Repo setup
+- [ ] GitHub remote exists; `main` seeded
 - [ ] Settings → Pages → Source = "GitHub Actions"
-- [ ] Workflow file present in `.github/workflows/` and valid YAML
-- [ ] Manual `workflow_dispatch` run completes green
+- [ ] `.github/workflows/cd.yml` triggers include `push: branches: [main]` (plus existing `workflow_dispatch`)
+
+### First end-to-end run
+- [ ] `git push gitea main` → Gitea CI green → mirror pushes → GitHub Pages workflow fires
+- [ ] Pages workflow green
 - [ ] Pages environment shows the deployment URL
+- [ ] GitHub `main` SHA matches Gitea `main` SHA
 
 ### Post-deploy smoke test
 - [ ] Landing page loads over HTTPS
 - [ ] CSS and fonts apply (no FOUC / 404s in devtools)
 - [ ] Every nav link resolves (no 404s from a missing `base`)
 - [ ] Images and downloads resolve
-- [ ] `/404` or unknown route behaves as expected
-- [ ] Mobile viewport renders (quick devtools check)
-- [ ] Lighthouse pass on the live URL (perf + no console errors)
+- [ ] Favicon + OG images load
+- [ ] `/404` behaves as expected
+- [ ] Mobile viewport renders
+- [ ] Lighthouse pass on the live URL (no console errors)
 
-## Plan 2: Gitea CI/CD
-### Runner & secrets
-- [ ] Gitea Actions enabled on the instance
-- [ ] At least one runner online with a label matching `runs-on`
-- [ ] Runner can reach the internet (or an actions mirror) for `setup-node` / pnpm
-- [ ] Runner network can reach the deploy host (LAN/DNS resolves)
-- [ ] Repo secrets set: `DEPLOY_SSH_KEY`, `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_PATH`
-- [ ] `DEPLOY_SSH_KEY` is the *private* key, full PEM including header/footer
-
-### Deploy host
-- [ ] Target path exists and is owned/writable by `DEPLOY_USER`
-- [ ] Public key appended to `~/.ssh/authorized_keys` on the target
-- [ ] (Optional) `command=`/`rrsync` restriction verified
-- [ ] Web server (nginx/caddy) doc root matches `DEPLOY_PATH`
-- [ ] Manual `ssh $DEPLOY_USER@$DEPLOY_HOST` from the runner succeeds (dry run)
-- [ ] Manual `rsync` dry-run from runner → host succeeds
-
-### First run
-- [ ] `ci.yml` passes on push to `main`
-- [ ] Artifact upload works, or step removed if Gitea artifact server isn't configured
-- [ ] `cd.yml` runs and rsync completes without permission errors
-- [ ] `ssh-keyscan` resolves the host (no "host key verification failed")
-
-### Post-deploy smoke test
-- [ ] Homelab URL serves the new build (check a changed string to confirm freshness)
-- [ ] Assets load (CSS, JS, images) — no stale cache from the previous deploy
-- [ ] All nav links resolve
-- [ ] Re-run the workflow; confirm idempotent (no stale files left behind — consider `rsync --delete`)
-
-### Hardening (optional, do after first green run)
-- [ ] `cd.yml` gated on `ci.yml` success (`workflow_run` or `needs`)
-- [ ] `concurrency` group set so overlapping pushes don't race
-- [ ] Deploy key scoped to the single target path
-- [ ] Rollback path documented (previous build retained, or git revert + re-run)
+### Hardening (after first green run)
+- [ ] `concurrency: pages` still set in `.github/workflows/cd.yml`
+- [ ] Rollback rehearsed: `git revert` on Gitea → push → mirrors → Pages redeploys
+- [ ] PAT rotation reminder on the calendar
+- [ ] Discipline: never push directly to GitHub; treat it as read-only downstream
+- [ ] (If a blocking GitHub-only check ever becomes necessary) revisit DEPLOY_PLAN.md and graduate to PR-based promotion

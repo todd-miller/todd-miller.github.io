@@ -1,38 +1,30 @@
-name: CD
+name: Mirror to GitHub
+
+# Fast-forward mirrors main to GitHub after CI passes.
+# GitHub Pages deploys on push to its main (see .github/workflows/cd.yml).
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
 
 jobs:
-  deploy:
+  mirror:
+    # Only run if the triggering CI run succeeded (manual dispatch always runs).
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
         with:
-          version: 9
+          fetch-depth: 0
+          ref: main
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run build
-
-      - name: Configure SSH
+      - name: Push to GitHub
+        env:
+          GITHUB_PUSH_TOKEN: ${{ secrets.GITHUB_PUSH_TOKEN }}
+          GITHUB_REPO: ${{ secrets.GITHUB_REPO }}
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
-
-      - name: Rsync to homelab
-        run: |
-          rsync -avz --delete \
-            -e "ssh -i ~/.ssh/id_ed25519" \
-            dist/ \
-            "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}"
+          git remote add github "https://x-access-token:${GITHUB_PUSH_TOKEN}@github.com/${GITHUB_REPO}.git"
+          git push github main:main

@@ -22,9 +22,5 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+      - run: pnpm exec astro check
       - run: pnpm run build
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: dist
-          path: dist/
