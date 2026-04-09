@@ -1,0 +1,33 @@
+---
+/**
+ * Sticky uppercase section header used by Experience, Skills, etc.
+ *
+ * If `href` is provided, the header renders as an anchor (used by Experience
+ * for the resume-download affordance). Otherwise a plain div.
+ *
+ * Slot `trailing` renders to the right of the title (icons, hover hints).
+ */
+interface Props {
+    title: string;
+    href?: string;
+    download?: boolean;
+    ariaLabel?: string;
+}
+
+const { title, href, download, ariaLabel } = Astro.props as Props;
+
+const wrapperClass =
+    "group/header sticky top-20 z-30 flex w-full items-center gap-3 mb-6 mt-15 py-4 bg-background";
+---
+
+{href ? (
+    <a href={href} download={download} aria-label={ariaLabel} class={wrapperClass}>
+        <h2 class="uppercase duration-300 group-hover/section:text-primary">{title}</h2>
+        <slot name="trailing" />
+    </a>
+) : (
+    <div class={wrapperClass}>
+        <h2 class="uppercase duration-300 group-hover/section:text-primary">{title}</h2>
+        <slot name="trailing" />
+    </div>
+)}

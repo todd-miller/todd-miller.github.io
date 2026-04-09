@@ -1,12 +1,15 @@
 ---
 import { cls } from "@/src/lib/utils";
+import { resolveIconUrl } from "@/src/lib/icon";
 import type { SkillsShowcase } from "@/src/content";
+import SectionHeader from "@/src/components/SectionHeader.astro";
 
 const { heading, subheading, skills } = Astro.props as SkillsShowcase;
 
 const ROW_COUNT = 4;
-// pixels per second; negative = scroll left (content moves left)
+// pixels per second; negative dir = scroll left (content moves left)
 const ROW_SPEED = 10;
+
 const chunk = <T,>(arr: T[], n: number): T[][] => {
   const size = Math.ceil(arr.length / n);
   return Array.from({ length: n }, (_, i) => arr.slice(i * size, (i + 1) * size));
@@ -20,9 +23,7 @@ const duplicate = <T,>(arr: T[]) => [...arr, ...arr, ...arr, ...arr];
 ---
 
 <section class="group/section mt-20">
-  <div class="sticky top-20 z-30 flex w-full items-center gap-3 mb-6 mt-15 py-4 bg-background">
-    <h2 class="uppercase duration-300 group-hover/section:text-primary">{heading}</h2>
-  </div>
+  <SectionHeader title={heading} />
   {subheading && <p class="text-white/50 text-sm mb-6">{subheading}</p>}
 
   <div class="skills-container relative py-2 overflow-hidden">
@@ -34,188 +35,40 @@ const duplicate = <T,>(arr: T[]) => [...arr, ...arr, ...arr, ...arr];
             class="skills-row relative w-full overflow-hidden my-3 group"
             data-direction={row.direction}
           >
-            <div
-              class={cls("skills-track flex w-max will-change-transform")}
-            >
-              {skills.map((skill) => {
-                return (
-                  <a
-                    class="skill-card mx-2"
-                    href={skill.url ?? "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <div
-                      class="skill-inner flex items-center gap-2 px-3 py-1.5 whitespace-nowrap transition-colors"
-                    >
-                      <img
-                        src={
-                          skill.icon.startsWith("/")
-                            ? skill.icon
-                            : `https://api.iconify.design/${skill.icon.includes(":") ? skill.icon.replace(":", "/") : `skill-icons/${skill.icon}`}.svg${skill.icon.startsWith("simple-icons:") ? "?color=%23ffffff" : ""}`
-                        }
-                        alt=""
-                        width="20"
-                        height="20"
-                        loading="lazy"
-                      />
-                      <span class="text-sm font-medium">{skill.name}</span>
-                    </div>
-                  </a>
-                );
-              })}
+            <div class={cls("skills-track flex w-max will-change-transform")}>
+              {skills.map((skill) => (
+                <a
+                  class="skill-card mx-2"
+                  href={skill.url ?? "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <div class="skill-inner flex items-center gap-2 px-3 py-1.5 whitespace-nowrap transition-colors">
+                    <img
+                      src={resolveIconUrl(skill.icon)}
+                      alt=""
+                      width="20"
+                      height="20"
+                      loading="lazy"
+                    />
+                    <span class="text-sm font-medium">{skill.name}</span>
+                  </div>
+                </a>
+              ))}
             </div>
           </div>
         );
       })
     }
 
-    <div class="pointer-events-none absolute left-0 top-0 w-[10%] h-full bg-gradient-to-r from-background  to-transparent z-10"></div>
-    <div class="pointer-events-none absolute right-0 top-0 w-[10%] h-full bg-gradient-to-l from-background to-transparent z-10"></div>
+    <div class="pointer-events-none absolute left-0 top-0 w-[10%] h-full bg-linear-to-r from-background to-transparent z-10"></div>
+    <div class="pointer-events-none absolute right-0 top-0 w-[10%] h-full bg-linear-to-l from-background to-transparent z-10"></div>
   </div>
 </section>
 
-<script is:inline define:vars={{ ROW_SPEED }}>
-  (() => {
-    const rows = document.querySelectorAll(".skills-row");
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    rows.forEach((row) => {
-      const track = row.querySelector(".skills-track");
-      if (!track) return;
-
-      const dir = row.getAttribute("data-direction") === "right" ? 1 : -1;
-      // One loop cycle = 1/4 of full track width (content duplicated 4x).
-      let cycle = 0;
-      const measure = () => { cycle = track.scrollWidth / 4; };
-      measure();
-      window.addEventListener("resize", measure);
-
-      // Start offset: reverse rows begin shifted so they have room to scroll right.
-      let offset = dir === 1 ? -cycle : 0;
-      let velocity = dir * ROW_SPEED; // px/sec
-      let pointerDown = false;
-      let dragging = false;
-      let hovering = false;
-      let pointerId = null;
-      const DRAG_THRESHOLD = 5;
-      let lastX = 0;
-      let lastT = 0;
-      let dragVel = 0;
-      let dragDist = 0;
-      let lastFrame = performance.now();
-
-      const wrap = (v) => {
-        if (cycle <= 0) return v;
-        // Keep offset in (-cycle, 0] so transform stays seamless.
-        while (v <= -cycle) v += cycle;
-        while (v > 0) v -= cycle;
-        return v;
-      };
-
-      const apply = () => {
-        track.style.transform = `translate3d(${offset}px, 0, 0)`;
-      };
-
-      const tick = (now) => {
-        const dt = Math.min(0.1, (now - lastFrame) / 1000);
-        lastFrame = now;
-        if (!dragging && !hovering && !prefersReduced) {
-          offset = wrap(offset + velocity * dt);
-          apply();
-        }
-        requestAnimationFrame(tick);
-      };
-      apply();
-      requestAnimationFrame(tick);
-
-      row.addEventListener("pointerenter", () => { hovering = true; });
-      row.addEventListener("pointerleave", () => { hovering = false; });
-
-      row.addEventListener("pointerdown", (e) => {
-        if (e.pointerType === "mouse" && e.button !== 0) return;
-        pointerDown = true;
-        dragging = false;
-        pointerId = e.pointerId;
-        lastX = e.clientX;
-        lastT = performance.now();
-        dragVel = 0;
-        dragDist = 0;
-      });
-
-      row.addEventListener("pointermove", (e) => {
-        if (!pointerDown || e.pointerId !== pointerId) return;
-        const now = performance.now();
-        const dx = e.clientX - lastX;
-        const dt = (now - lastT) / 1000;
-        lastX = e.clientX;
-        lastT = now;
-        dragDist += Math.abs(dx);
-        if (!dragging && dragDist > DRAG_THRESHOLD) {
-          dragging = true;
-          try { row.setPointerCapture(pointerId); } catch {}
-          row.classList.add("is-dragging");
-        }
-        if (!dragging) return;
-        if (dt > 0) dragVel = dx / dt;
-        offset = wrap(offset + dx);
-        apply();
-      });
-
-      const endDrag = (e) => {
-        if (!pointerDown || (e && e.pointerId !== pointerId)) return;
-        pointerDown = false;
-        const wasDragging = dragging;
-        dragging = false;
-        if (wasDragging) {
-          try { row.releasePointerCapture(pointerId); } catch {}
-        }
-        pointerId = null;
-        row.classList.remove("is-dragging");
-        // Resume at baseline velocity (could blend in dragVel for inertia).
-        velocity = dir * ROW_SPEED;
-      };
-      row.addEventListener("pointerup", endDrag);
-      row.addEventListener("pointercancel", endDrag);
-
-      // Intercept skill clicks: suppress after drag, otherwise open in background tab.
-      row.addEventListener(
-        "click",
-        (e) => {
-          const wasDrag = dragDist > 5;
-          dragDist = 0;
-          if (wasDrag) {
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-          }
-          const anchor = e.target instanceof Element ? e.target.closest("a.skill-card") : null;
-          if (!anchor) return;
-          // Only rewrite plain left-clicks; let modified clicks use native behavior.
-          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-          e.preventDefault();
-          e.stopPropagation();
-          const href = anchor.getAttribute("href");
-          if (!href || href === "#") return;
-          // Simulate cmd/ctrl+click so the browser opens a background tab.
-          const isMac = navigator.platform.toUpperCase().includes("MAC");
-          const synthetic = new MouseEvent("click", {
-            bubbles: false,
-            cancelable: true,
-            view: window,
-            ctrlKey: !isMac,
-            metaKey: isMac,
-          });
-          const temp = document.createElement("a");
-          temp.href = href;
-          temp.target = "_blank";
-          temp.rel = "noopener noreferrer";
-          temp.dispatchEvent(synthetic);
-        },
-        true
-      );
-    });
-  })();
+<script>
+  import { initSkillsMarquee } from "@/src/scripts/skills-marquee";
+  initSkillsMarquee(10);
 </script>
 
 <style is:global>

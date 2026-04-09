@@ -1,4 +1,4 @@
- ---
+---
 import type { Contact } from "@/src/content";
 import Mail from "@lucide/astro/icons/mail";
 import Github from "@lucide/astro/icons/github";
@@ -41,25 +41,21 @@ const email = email_url.replace(/^mailto:/, "");
 </div>
 
 <script>
-    const btn = document.querySelector<HTMLButtonElement>("[data-copy-email]");
-    const toast = btn?.querySelector<HTMLElement>("[data-copy-toast]");
-    if (btn && toast) {
+    const buttons = document.querySelectorAll<HTMLButtonElement>("[data-copy-email]");
+    buttons.forEach((btn) => {
+        const toast = btn.querySelector<HTMLElement>("[data-copy-toast]");
+        if (!toast) return;
         let timer: number | undefined;
         btn.addEventListener("click", async () => {
             const email = btn.dataset.email ?? "";
             try {
                 await navigator.clipboard.writeText(email);
             } catch {
-                const ta = document.createElement("textarea");
-                ta.value = email;
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand("copy");
-                ta.remove();
+                return;
             }
             toast.style.opacity = "1";
             window.clearTimeout(timer);
             timer = window.setTimeout(() => (toast.style.opacity = "0"), 1500);
         });
-    }
+    });
 </script>

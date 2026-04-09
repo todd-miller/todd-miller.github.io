@@ -1,84 +1,62 @@
 ---
 import { FileDown } from "@lucide/astro";
 import type { Experience } from "@/src/content";
+import { formatPeriodRange, formatPeriodEnd } from "@/src/lib/date";
+import SectionHeader from "@/src/components/SectionHeader.astro";
 
 const { title, jobs } = Astro.props as Experience;
 
 const HIGHLIGHTS_DURATION = "800ms";
-
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-function parse(d: string | null) {
-    if (!d) return null;
-    const [y, m] = d.split("-").map(Number);
-    return { year: y, month: m, label: `${MONTHS[m - 1]} ${y}` };
-}
-
-// 1-col (mobile): full range, e.g. "Feb 2025 — now"
-function formatOneCol(period: { start: string; end: string | null }) {
-    const s = parse(period.start);
-    const e = parse(period.end);
-    return `${s?.label} — ${e?.label ?? "now"}`;
-}
-
-// 2-col (desktop): just the end (or "now")
-function formatTwoCol(period: { start: string; end: string | null }) {
-    const e = parse(period.end);
-    return e?.label ?? "now";
-}
 ---
 
 <section id={title.toLowerCase()} class="group/section scroll-mt-50" style={`--highlights-duration: ${HIGHLIGHTS_DURATION}`}>
-    <a
-        href="/resume.pdf"
-        download
-        aria-label="Download resume PDF"
-        class="group/header sticky top-20 z-30 flex w-full items-center gap-3 mb-6 mt-15 py-4 bg-background"
-    >
-        <h2 class="uppercase duration-300 group-hover/section:text-primary">{title}</h2>
-        <FileDown class="size-4 transition-[color,filter] duration-300 group-hover/section:text-accent group-hover/section:drop-shadow-[0_0_2px_color-mix(in_srgb,var(--color-primary)_60%,transparent)]" />
-        <span class="hidden group-hover/section:inline text-sm text-accent transition-[color,filter] duration-300 drop-shadow-[0_0_2px_color-mix(in_srgb,var(--color-primary)_60%,transparent)]">(download resume)</span>
-        
-    </a>
+    <SectionHeader title={title} href="/resume.pdf" download ariaLabel="Download resume PDF">
+        <Fragment slot="trailing">
+            <FileDown class="size-4 transition-[color,filter] duration-300 group-hover/section:text-accent group-hover/section:drop-shadow-[0_0_2px_color-mix(in_srgb,var(--color-primary)_60%,transparent)]" />
+            <span class="hidden group-hover/section:inline text-sm text-accent transition-[color,filter] duration-300 drop-shadow-[0_0_2px_color-mix(in_srgb,var(--color-primary)_60%,transparent)]">(download resume)</span>
+        </Fragment>
+    </SectionHeader>
     <ul class="border-x border-transparent hover:border-border transition-colors duration-300 ease-out px-4 [overflow-anchor:none]">
         {jobs.map((job) => (
-            <li class="job group cursor-pointer grid grid-cols-1 md:grid-cols-10 gap-y-1 pt-4 md:pt-0 pb-4 md:pb-0 rounded-lg transition-colors duration-300 hover:bg-black/20">
-                <div class="md:hidden opacity-50 text-[0.87rem] transition-opacity duration-300 group-hover:opacity-100">
-                    {formatOneCol(job.period)}
-                </div>
-                <div class="hidden md:flex col-span-2 flex-col items-center pr-4">
-                    <div class="opacity-50 text-[0.87rem] pb-2 transition-[color,opacity] duration-300 group-hover:opacity-100 group-hover:text-accent">
-                        {formatTwoCol(job.period)}
-                    </div>
-                    <div class="w-px flex-1 bg-linear-to-b from-primary from-70% to-transparent"></div>
-                </div>
-                <div class="col-span-8 md:pb-8">
-                    <div class="transition-colors duration-300 ease-out group-hover:text-primary">
-                    <span class="group-hover:text-accent">{job.role}</span>
-                    <span class="opacity-50">&nbsp;|&nbsp;</span>
-                    <span class="job-company text-primary/70">{job.company}</span>
-                  </div>
-                    {job.summary && (
-                    <p class="text-[0.87rem] opacity-50 group-hover:opacity-90 group-hover:text-accent transition-[color,opacity] duration-300 ease-out">
-                            {job.summary}
-                        </p>
-                    )}
-                    {job.highlights.length > 0 && (
-                        <div class="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-[var(--highlights-duration,500ms)] ease-out">
-                            <ul class="overflow-hidden text-[0.87rem] opacity-0 group-hover:opacity-100 transition-opacity duration-[var(--highlights-duration,500ms)] ease-out list-disc pl-5">
-                                {job.highlights.map((h) => <li class="mt-1">{h}</li>)}
-                            </ul>
+            <li>
+                <details class="job group gap-y-1 pt-4 md:pt-0 pb-4 md:pb-0 rounded-lg transition-colors duration-300 hover:bg-black/20 open:bg-black/20">
+                    <summary class="cursor-pointer list-none grid grid-cols-1 md:grid-cols-10 gap-y-1">
+                        <div class="md:hidden opacity-70 text-[0.87rem] transition-opacity duration-300 group-hover:opacity-100 group-open:opacity-100">
+                            {formatPeriodRange(job.period)}
                         </div>
-                    )}
-                    {job.tech.length > 0 && (
-                        <p class="text-[0.75rem] opacity-40 mt-1 group-hover:opacity-100 group-hover:text-accent transition-[color,opacity] duration-300 ease-out">
-                            {job.tech.join(" · ")}
-                        </p>
-                    )}
-                </div>
+                        <div class="hidden md:flex col-span-2 flex-col items-center pr-4">
+                            <div class="opacity-70 text-[0.87rem] pb-2 transition-[color,opacity] duration-300 group-hover:opacity-100 group-hover:text-accent group-open:opacity-100 group-open:text-accent">
+                                {formatPeriodEnd(job.period)}
+                            </div>
+                            <div class="w-px flex-1 bg-linear-to-b from-primary from-70% to-transparent"></div>
+                        </div>
+                        <div class="col-span-8 md:pb-8">
+                            <div class="transition-colors duration-300 ease-out group-hover:text-primary group-open:text-primary">
+                                <span class="group-hover:text-accent group-open:text-accent">{job.role}</span>
+                                <span class="opacity-70">&nbsp;|&nbsp;</span>
+                                <span class="job-company text-primary/70">{job.company}</span>
+                            </div>
+                            {job.summary && (
+                                <p class="text-[0.87rem] opacity-70 group-hover:opacity-90 group-hover:text-accent group-open:opacity-90 group-open:text-accent transition-[color,opacity] duration-300 ease-out">
+                                    {job.summary}
+                                </p>
+                            )}
+                            {job.highlights.length > 0 && (
+                                <div class="grid grid-rows-[0fr] group-open:grid-rows-[1fr] transition-[grid-template-rows] duration-(--highlights-duration,500ms) ease-out">
+                                    <ul class="overflow-hidden text-[0.87rem] opacity-0 group-open:opacity-100 transition-opacity duration-(--highlights-duration,500ms) ease-out list-disc pl-5">
+                                        {job.highlights.map((h) => <li class="mt-1">{h}</li>)}
+                                    </ul>
+                                </div>
+                            )}
+                            {job.tech.length > 0 && (
+                                <p class="text-[0.75rem] opacity-70 mt-1 group-hover:opacity-100 group-hover:text-accent group-open:opacity-100 group-open:text-accent transition-[color,opacity] duration-300 ease-out">
+                                    {job.tech.join(" · ")}
+                                </p>
+                            )}
+                        </div>
+                    </summary>
+                </details>
             </li>
         ))}
     </ul>
 </section>
-
-

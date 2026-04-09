@@ -5,10 +5,7 @@ import Header from "@/src/components/Header.astro";
 import Hero from "@/src/components/Hero.astro";
 import Contact from "@/src/components/Contact.astro";
 import Experience from "@/src/components/Experience.astro";
-// TODO: [enable-projects-section]
-// import Projects from "@/src/components/Projects.astro";
 import Footer from "@/src/components/Footer.astro";
-// import GhContributions from "@/src/components/Spotlight.astro";
 import SkillsShowcase from "@/src/components/SkillsShowcase.astro";
 
 const nav = [
@@ -23,13 +20,9 @@ const nav = [
 
   <main>
     <Hero name={content.name} {...content.hero} />
-    <!-- TODO: [enable-projects-section] -->
-    <!-- <Projects {...content.projects} /> -->
     <Contact {...content.contact} />
-    <Experience {...content.experience} />
     <SkillsShowcase {...content.skillsShowcase} />
-    <!-- TODO: [enable-github-gitea-contributions tracking] -->
-    <!-- <GhContributions {...content.spotlight} /> -->
+    <Experience {...content.experience} />
   </main>
 
   <Footer {...content.contact} />
