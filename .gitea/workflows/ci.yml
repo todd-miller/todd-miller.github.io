@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -24,3 +25,22 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec astro check
       - run: pnpm run build
+
+  mirror:
+    # Only mirror on push/dispatch against main, and only if build passed.
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Push to GitHub
+        env:
+          GH_PUSH_TOKEN: ${{ secrets.GH_PUSH_TOKEN }}
+          GH_REPO: ${{ secrets.GH_REPO }}
+        run: |
+          git remote add github "https://x-access-token:${GH_PUSH_TOKEN}@github.com/${GH_REPO}.git"
+          git push github main:main
