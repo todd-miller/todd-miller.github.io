@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+html, body {
+  overflow-anchor: none;
+}
+
 
 
 @custom-variant dark (&:is(.dark *));

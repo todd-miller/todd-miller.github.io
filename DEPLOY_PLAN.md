@@ -5,7 +5,7 @@
 **Goal:** get the site live on GitHub Pages via manual `workflow_dispatch`.
 
 1. **Decide the URL shape.** Two options:
-   - User/org site (`<user>.github.io`) → `site: "https://<user>.github.io/"`, no `base`.
+   - [x] User/org site (`<user>.github.io`) → `site: "https://<user>.github.io/"`, no `base`.
    - Project site (`<user>.github.io/mysite`) → `site: "https://<user>.github.io"`, `base: "/mysite"`.
 2. **Update `astro.config.mjs`** with the chosen `site` (and `base` if needed). Any absolute links/assets in components should use `import.meta.env.BASE_URL` if you picked a project site.
 3. **Push to GitHub.** Confirm the non-origin remote exists (`git remote -v`); add one if not (`git remote add github …`). Push `main`.
@@ -41,4 +41,6 @@
 
 ### Open questions to resolve before starting Plan 2
 - Is the homelab target a VM/container with SSH, or something else (e.g. direct path on the Gitea host)? If it's the same host as the Gitea runner, you can skip SSH entirely and just `cp -r`.
+  - its a docker container that should be exposed
 - Is the Gitea runner containerized (docker) or host-mode? Containerized runners often can't reach homelab LAN hosts without extra network config.
+  - yes its containerized

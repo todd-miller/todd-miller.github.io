@@ -33,16 +33,16 @@ function formatTwoCol(period: { start: string; end: string | null }) {
         href="/resume.pdf"
         download
         aria-label="Download resume PDF"
-        class="group/header z-50 flex w-full items-center gap-3 mb-6 mt-15 py-4 bg-background"
+        class="group/header sticky top-20 z-30 flex w-full items-center gap-3 mb-6 mt-15 py-4 bg-background"
     >
         <h2 class="uppercase duration-300 group-hover/section:text-primary">{title}</h2>
         <FileDown class="size-4 transition-[color,filter] duration-300 group-hover/section:text-accent group-hover/section:drop-shadow-[0_0_2px_color-mix(in_srgb,var(--color-primary)_60%,transparent)]" />
         <span class="hidden group-hover/section:inline text-sm text-accent transition-[color,filter] duration-300 drop-shadow-[0_0_2px_color-mix(in_srgb,var(--color-primary)_60%,transparent)]">(download resume)</span>
         
     </a>
-    <ul class="border-x border-transparent hover:border-border transition-colors duration-300 ease-out px-4">
+    <ul class="border-x border-transparent hover:border-border transition-colors duration-300 ease-out px-4 [overflow-anchor:none]">
         {jobs.map((job) => (
-            <li class="group cursor-pointer grid grid-cols-1 md:grid-cols-10 gap-y-1 pt-4 md:pt-0 pb-4 md:pb-0 rounded-lg transition-colors duration-300 hover:bg-black/20">
+            <li class="job group cursor-pointer grid grid-cols-1 md:grid-cols-10 gap-y-1 pt-4 md:pt-0 pb-4 md:pb-0 rounded-lg transition-colors duration-300 hover:bg-black/20">
                 <div class="md:hidden opacity-50 text-[0.87rem] transition-opacity duration-300 group-hover:opacity-100">
                     {formatOneCol(job.period)}
                 </div>
@@ -59,7 +59,7 @@ function formatTwoCol(period: { start: string; end: string | null }) {
                     <span class="job-company text-primary/70">{job.company}</span>
                   </div>
                     {job.summary && (
-                        <p class="text-[0.87rem] opacity-50 group-hover:opacity-90 group-hover:text-primary/70 transition-[color,opacity] duration-300 ease-out">
+                    <p class="text-[0.87rem] opacity-50 group-hover:opacity-90 group-hover:text-accent transition-[color,opacity] duration-300 ease-out">
                             {job.summary}
                         </p>
                     )}
@@ -81,14 +81,4 @@ function formatTwoCol(period: { start: string; end: string | null }) {
     </ul>
 </section>
 
-<script>
-    const OFFSET = 175;
-    document.querySelectorAll<HTMLElement>("section[id]").forEach((section) => {
-        section.addEventListener("mouseenter", () => {
-            const y = section.getBoundingClientRect().top + window.scrollY - OFFSET;
-            if (Math.abs(window.scrollY - y) > 8) {
-                window.scrollTo({ top: y, behavior: "smooth" });
-            }
-        });
-    });
-</script>
+
