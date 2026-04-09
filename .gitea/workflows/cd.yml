@@ -23,8 +23,8 @@ jobs:
 
       - name: Push to GitHub
         env:
-          GITHUB_PUSH_TOKEN: ${{ secrets.GITHUB_PUSH_TOKEN }}
-          GITHUB_REPO: ${{ secrets.GITHUB_REPO }}
+          GH_PUSH_TOKEN: ${{ secrets.GH_PUSH_TOKEN }}
+          GH_REPO: ${{ secrets.GH_REPO }}
         run: |
-          git remote add github "https://x-access-token:${GITHUB_PUSH_TOKEN}@github.com/${GITHUB_REPO}.git"
+          git remote add github "https://x-access-token:${GH_PUSH_TOKEN}@github.com/${GH_REPO}.git"
           git push github main:main
