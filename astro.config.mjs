@@ -8,7 +8,6 @@ import sitemap from '@astrojs/sitemap';
 // https://astro.build/config
 export default defineConfig({
   site: "https://todd-miller.github.io",
-  base: "/mysite/",
 
   vite: {
     plugins: [tailwindcss()]
