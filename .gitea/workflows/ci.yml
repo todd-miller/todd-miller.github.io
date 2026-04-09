@@ -25,6 +25,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec astro check
       - run: pnpm run build
+      - run: pnpm run test
+      - run: pnpm run test:e2e:install
+      - run: pnpm run test:e2e
 
   mirror:
     # Only mirror on push/dispatch against main, and only if build passed.
